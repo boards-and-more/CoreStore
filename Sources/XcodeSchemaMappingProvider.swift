@@ -50,17 +50,23 @@ public final class XcodeSchemaMappingProvider: Hashable, SchemaMappingProvider {
     public let mappingModelBundle: Bundle
     
     /**
+     The key at the bundle's infoDictionary where to find the optional Product Module prefix/namespace for all entityMigrationPolicyClassNames.
+     */
+    public let bundleInfoDictionaryModuleKey: String?
+    
+    /**
      Creates an `XcodeSchemaMappingProvider`
      
      - parameter sourceVersion: the source model version for the mapping
      - parameter destinationVersion: the destination model version for the mapping
      - parameter mappingModelBundle: the `Bundle` that contains the xcmappingmodel file
      */
-    public required init(from sourceVersion: ModelVersion, to destinationVersion: ModelVersion, mappingModelBundle: Bundle) {
+    public required init(from sourceVersion: ModelVersion, to destinationVersion: ModelVersion, mappingModelBundle: Bundle, bundleInfoDictionaryModuleKey: String? = nil) {
         
         self.sourceVersion = sourceVersion
         self.destinationVersion = destinationVersion
         self.mappingModelBundle = mappingModelBundle
+        self.bundleInfoDictionaryModuleKey = bundleInfoDictionaryModuleKey
     }
     
     
@@ -94,6 +100,17 @@ public final class XcodeSchemaMappingProvider: Hashable, SchemaMappingProvider {
             from: [self.mappingModelBundle],
             forSourceModel: sourceModel,
             destinationModel: destinationModel) {
+         
+            // Let Entity Migration Policy at default, but when is changed away from default in mapping model, ensure the
+            // declaration there contains current Product Module name as namespace.
+            if let infoKey = self.bundleInfoDictionaryModuleKey, let namespace = self.mappingModelBundle.infoDictionary?[infoKey] as? String {
+                let defaultClassName = NSStringFromClass(NSEntityMigrationPolicy.self)
+                mappingModel.entityMappings.forEach {
+                    if let entityMigrationPolicyClassName = $0.entityMigrationPolicyClassName, entityMigrationPolicyClassName != defaultClassName, !entityMigrationPolicyClassName.contains(".") {
+                        $0.entityMigrationPolicyClassName = "\(namespace).\(entityMigrationPolicyClassName)"
+                    }
+                }
+            }
             
             return (
                 mappingModel,
