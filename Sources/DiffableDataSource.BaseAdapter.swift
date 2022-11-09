@@ -116,10 +116,10 @@ extension DiffableDataSource {
                     target.reload(
                         using: changeset,
                         animated: animatingDifferences,
-                        setData: setSections
+                        setData: setSections,
+                        completion: completion
                     )
-                },
-                completion: completion
+                }
             )
         }
 
@@ -148,10 +148,21 @@ extension DiffableDataSource {
                     target.reload(
                         using: changeset,
                         animated: animatingDifferences,
-                        setData: setSections
+                        setData: setSections,
+                        completion: completion
                     )
-                },
-                completion: completion
+                }
+            )
+        }
+        
+        /**
+         Creates a new empty `ListSnapshot` suitable for building custom lists inside subclass implementations of `apply(_:animatingDifferences:completion:)`.
+         */
+        public func makeEmptySnapshot() -> ListSnapshot<O> {
+            
+            return .init(
+                diffableSnapshot: .init(),
+                context: self.dataStack.unsafeContext()
             )
         }
 

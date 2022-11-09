@@ -100,7 +100,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIndex: the index for the object within the section. Using an `itemIndex` with an invalid range will raise an exception.
      - returns: the `ObjectPublisher<O>` interfacing the object at the specified section and item index
      */
-    public subscript(sectionIndex: Int, itemIndex: Int) -> ObjectPublisher<O> {
+    public subscript(
+        sectionIndex: Int,
+        itemIndex: Int
+    ) -> ObjectPublisher<O> {
 
         let context = self.context!
         let snapshot = self.diffableSnapshot
@@ -116,7 +119,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIndex: the index for the object within the section. Using an `itemIndex` with an invalid range will return `nil`.
      - returns: the `ObjectPublisher<O>` interfacing the object at the specified section and item index, or `nil` if out of bounds
      */
-    public subscript(safeSectionIndex sectionIndex: Int, safeItemIndex itemIndex: Int) -> ObjectPublisher<O>? {
+    public subscript(
+        safeSectionIndex sectionIndex: Int,
+        safeItemIndex itemIndex: Int
+    ) -> ObjectPublisher<O>? {
 
         guard let context = self.context else {
 
@@ -333,7 +339,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter indices: the positions of the itemIDs to return. Specifying an invalid value will raise an exception.
      - returns: the `ItemID` array belonging to the given `SectionID` at the specified indices
      */
-    public func itemIDs<S: Sequence>(inSectionWithID sectionID: SectionID, atIndices indices: S) -> [ItemID] where S.Element == Int {
+    public func itemIDs<S: Sequence>(
+        inSectionWithID sectionID: SectionID,
+        atIndices indices: S
+    ) -> [ItemID] where S.Element == Int {
 
         let itemIDs = self.diffableSnapshot.itemIdentifiers(inSection: sectionID)
         return indices.map({ itemIDs[$0] })
@@ -398,7 +407,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIndices: the positions of items within the section. Specifying an invalid value will raise an exception.
      - returns: an array of `ObjectPublisher`s for the items in the specified `SectionID` and indices
      */
-    public func items<S: Sequence>(inSectionWithID sectionID: SectionID, atIndices itemIndices: S) -> [ObjectPublisher<O>] where S.Element == Int {
+    public func items<S: Sequence>(
+        inSectionWithID sectionID: SectionID,
+        atIndices itemIndices: S
+    ) -> [ObjectPublisher<O>] where S.Element == Int {
 
         let context = self.context!
         let itemIDs = self.diffableSnapshot.itemIdentifiers(inSection: sectionID)
@@ -446,7 +458,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIndices: the positions of items within the section. Specifying an invalid value will raise an exception.
      - returns: a lazy sequence of `ObjectPublisher`s for the items in the specified `SectionID` and indices
      */
-    public func lazy<S: Sequence>(inSectionWithID sectionID: SectionID, atIndices itemIndices: S) -> LazyMapSequence<S, ObjectPublisher<O>> where S.Element == Int {
+    public func lazy<S: Sequence>(
+        inSectionWithID sectionID: SectionID,
+        atIndices itemIndices: S
+    ) -> LazyMapSequence<S, ObjectPublisher<O>> where S.Element == Int {
 
         let context = self.context!
         let itemIDs = self.diffableSnapshot.itemIdentifiers(inSection: sectionID)
@@ -466,9 +481,32 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIDs: the object identifiers for the objects to append
      - parameter sectionID: the section to append the items to
      */
-    public mutating func appendItems<C: Collection>(withIDs itemIDs: C, toSectionWithID sectionID: SectionID? = nil) where C.Element == ItemID {
+    public mutating func appendItems<C: Collection>(
+        withIDs itemIDs: C,
+        toSectionWithID sectionID: SectionID? = nil
+    ) where C.Element == ItemID {
 
-        self.diffableSnapshot.appendItems(itemIDs, toSection: sectionID)
+        self.mutate {
+
+            $0.appendItems(itemIDs, toSection: sectionID)
+        }
+    }
+    
+    /**
+     Appends extra items to the specified section index
+
+     - parameter itemIDs: the object identifiers for the objects to append
+     - parameter sectionIndex: the section index to append the items to. Specifying an invalid value will raise an exception.
+     */
+    public mutating func appendItems<C: Collection>(
+        with itemIDs: C,
+        toSectionAt sectionIndex: Int
+    ) where C.Element == ItemID {
+
+        self.mutate {
+
+            $0.unsafeAppendItems(itemIDs, toSectionAt: sectionIndex)
+        }
     }
     
     /**
@@ -477,9 +515,15 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIDs: the object identifiers for the objects to insert
      - parameter beforeItemID: an existing identifier to insert items before of. Specifying an invalid value will raise an exception.
      */
-    public mutating func insertItems<C: Collection>(withIDs itemIDs: C, beforeItemID: ItemID) where C.Element == ItemID {
+    public mutating func insertItems<C: Collection>(
+        withIDs itemIDs: C,
+        beforeItemID: ItemID
+    ) where C.Element == ItemID {
 
-        self.diffableSnapshot.insertItems(itemIDs, beforeItem: beforeItemID)
+        self.mutate {
+
+            $0.insertItems(itemIDs, beforeItem: beforeItemID)
+        }
     }
     
     /**
@@ -488,9 +532,32 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemIDs: the object identifiers for the objects to insert
      - parameter beforeItemID: an existing identifier to insert items after of. Specifying an invalid value will raise an exception.
      */
-    public mutating func insertItems<C: Collection>(withIDs itemIDs: C, afterItemID: ItemID) where C.Element == ItemID {
+    public mutating func insertItems<C: Collection>(
+        withIDs itemIDs: C,
+        afterItemID: ItemID
+    ) where C.Element == ItemID {
 
-        self.diffableSnapshot.insertItems(itemIDs, afterItem: afterItemID)
+        self.mutate {
+
+            $0.insertItems(itemIDs, afterItem: afterItemID)
+        }
+    }
+    
+    /**
+     Inserts extra items at a specified index path
+
+     - parameter itemIDs: the object identifiers for the objects to insert
+     - parameter indexPath: an indexPath to insert the items into. Specifying an invalid value will raise an exception.
+     */
+    public mutating func insertItems<C: Collection>(
+        withIDs itemIDs: C,
+        at indexPath: IndexPath
+    ) where C.Element == ItemID {
+
+        self.mutate {
+
+            $0.unsafeInsertItems(itemIDs, at: indexPath)
+        }
     }
     
     /**
@@ -498,9 +565,25 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
 
      - parameter itemIDs: the object identifiers for the objects to delete
      */
-    public mutating func deleteItems<S: Sequence>(withIDs itemIDs: S) where S.Element == ItemID {
+    public mutating func deleteItems<C: Collection>(withIDs itemIDs: C) where C.Element == ItemID {
 
-        self.diffableSnapshot.deleteItems(itemIDs)
+        self.mutate {
+
+            $0.deleteItems(itemIDs)
+        }
+    }
+    
+    /**
+     Deletes the items at the specified index paths
+
+     - parameter itemIndexPaths: the index paths for the objects to delete. Specifying an invalid value will raise an exception.
+     */
+    public mutating func deleteItems<C: Collection>(at itemIndexPaths: C) where C.Element == IndexPath {
+
+        self.mutate {
+
+            $0.unsafeDeleteItems(at: itemIndexPaths)
+        }
     }
     
     /**
@@ -508,7 +591,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      */
     public mutating func deleteAllItems() {
 
-        self.diffableSnapshot.deleteAllItems()
+        self.mutate {
+
+            $0.deleteAllItems()
+        }
     }
     
     /**
@@ -517,9 +603,15 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemID: an object identifier in the list to move. Specifying an invalid value will raise an exception.
      - parameter beforeItemID: another identifier to move the item before of. Specifying an invalid value will raise an exception.
      */
-    public mutating func moveItem(withID itemID: ItemID, beforeItemID: ItemID) {
+    public mutating func moveItem(
+        withID itemID: ItemID,
+        beforeItemID: ItemID
+    ) {
 
-        self.diffableSnapshot.moveItem(itemID, beforeItem: beforeItemID)
+        self.mutate {
+
+            $0.moveItem(itemID, beforeItem: beforeItemID)
+        }
     }
     
     /**
@@ -528,9 +620,32 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter itemID: an object identifier in the list to move. Specifying an invalid value will raise an exception.
      - parameter beforeItemID: another identifier to move the item after of. Specifying an invalid value will raise an exception.
      */
-    public mutating func moveItem(withID itemID: ItemID, afterItemID: ItemID) {
+    public mutating func moveItem(
+        withID itemID: ItemID,
+        afterItemID: ItemID
+    ) {
 
-        self.diffableSnapshot.moveItem(itemID, afterItem: afterItemID)
+        self.mutate {
+
+            $0.moveItem(itemID, afterItem: afterItemID)
+        }
+    }
+    
+    /**
+     Moves an item at an index path to a new index path
+
+     - parameter itemIndexPath: an index path in the list to move. Specifying an invalid value will raise an exception.
+     - parameter newIndexPath: the new index path to move the item into. Specifying an invalid value will raise an exception.
+     */
+    public mutating func moveItem(
+        at itemIndexPath: IndexPath,
+        to newIndexPath: IndexPath
+    ) {
+
+        self.mutate {
+
+            $0.unsafeMoveItem(at: itemIndexPath, to: newIndexPath)
+        }
     }
     
     /**
@@ -538,9 +653,25 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
 
      - parameter itemIDs: the object identifiers to reload
      */
-    public mutating func reloadItems<S: Sequence>(withIDs itemIDs: S) where S.Element == ItemID {
+    public mutating func reloadItems<C: Collection>(withIDs itemIDs: C) where C.Element == ItemID {
 
-        self.diffableSnapshot.reloadItems(itemIDs)
+        self.mutate {
+
+            $0.reloadItems(itemIDs)
+        }
+    }
+    
+    /**
+     Marks the specified index paths as reloaded
+
+     - parameter itemIndexPaths: the index paths to reload. Specifying an invalid value will raise an exception.
+     */
+    public mutating func reloadItems<C: Collection>(at itemIndexPaths: C) where C.Element == IndexPath {
+
+        self.mutate {
+
+            $0.unsafeReloadItems(at: itemIndexPaths)
+        }
     }
     
     /**
@@ -550,7 +681,10 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      */
     public mutating func appendSections<C: Collection>(withIDs sectionIDs: C) where C.Element == SectionID {
 
-        self.diffableSnapshot.appendSections(sectionIDs)
+        self.mutate {
+
+            $0.appendSections(sectionIDs)
+        }
     }
     
     /**
@@ -559,9 +693,15 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter sectionIDs: the section identifiers for the sections to insert
      - parameter beforeSectionID: an existing identifier to insert items before of. Specifying an invalid value will raise an exception.
      */
-    public mutating func insertSections<C: Collection>(withIDs sectionIDs: C, beforeSectionID: SectionID) where C.Element == SectionID {
+    public mutating func insertSections<C: Collection>(
+        withIDs sectionIDs: C,
+        beforeSectionID: SectionID
+    ) where C.Element == SectionID {
 
-        self.diffableSnapshot.insertSections(sectionIDs, beforeSection: beforeSectionID)
+        self.mutate {
+
+            $0.insertSections(sectionIDs, beforeSection: beforeSectionID)
+        }
     }
     
     /**
@@ -570,9 +710,32 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter sectionIDs: the section identifiers for the sections to insert
      - parameter beforeSectionID: an existing identifier to insert items after of. Specifying an invalid value will raise an exception.
      */
-    public mutating func insertSections<C: Collection>(withIDs sectionIDs: C, afterSectionID: SectionID) where C.Element == SectionID {
+    public mutating func insertSections<C: Collection>(
+        withIDs sectionIDs: C,
+        afterSectionID: SectionID
+    ) where C.Element == SectionID {
 
-        self.diffableSnapshot.insertSections(sectionIDs, afterSection: afterSectionID)
+        self.mutate {
+
+            $0.insertSections(sectionIDs, afterSection: afterSectionID)
+        }
+    }
+    
+    /**
+     Inserts new sections into an existing section index
+
+     - parameter sectionIDs: the section identifiers for the sections to insert
+     - parameter sectionIndex: an existing section index to insert items into. Specifying an invalid value will raise an exception.
+     */
+    public mutating func insertSections<C: Collection>(
+        _ sectionIDs: C,
+        at sectionIndex: Int
+    ) where C.Element == String {
+
+        self.mutate {
+
+            $0.unsafeInsertSections(sectionIDs, at: sectionIndex)
+        }
     }
     
     /**
@@ -580,9 +743,25 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
 
      - parameter sectionIDs: the section identifiers for the sections to delete
      */
-    public mutating func deleteSections<S: Sequence>(withIDs sectionIDs: S) where S.Element == SectionID {
+    public mutating func deleteSections<C: Collection>(withIDs sectionIDs: C) where C.Element == SectionID {
 
-        self.diffableSnapshot.deleteSections(sectionIDs)
+        self.mutate {
+
+            $0.deleteSections(sectionIDs)
+        }
+    }
+    
+    /**
+     Deletes the specified section indices
+
+     - parameter sectionIndices: the section indices to delete. Specifying an invalid value will raise an exception.
+     */
+    public mutating func deleteSections<C: Collection>(at sectionIndices: C) where C.Element == Int {
+
+        self.mutate {
+
+            $0.unsafeDeleteSections(at: sectionIndices)
+        }
     }
     
     /**
@@ -591,9 +770,15 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter sectionID: a section identifier in the list to move. Specifying an invalid value will raise an exception.
      - parameter beforeSectionID: another identifier to move the section before of. Specifying an invalid value will raise an exception.
      */
-    public mutating func moveSection(withID sectionID: SectionID, beforeSectionID: SectionID) {
+    public mutating func moveSection(
+        withID sectionID: SectionID,
+        beforeSectionID: SectionID
+    ) {
 
-        self.diffableSnapshot.moveSection(sectionID, beforeSection: beforeSectionID)
+        self.mutate {
+
+            $0.moveSection(sectionID, beforeSection: beforeSectionID)
+        }
     }
     
     /**
@@ -602,9 +787,32 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
      - parameter sectionID: a section identifier in the list to move. Specifying an invalid value will raise an exception.
      - parameter afterSectionID: another identifier to move the section after of. Specifying an invalid value will raise an exception.
      */
-    public mutating func moveSection(withID sectionID: SectionID, afterSectionID: SectionID) {
+    public mutating func moveSection(
+        withID sectionID: SectionID,
+        afterSectionID: SectionID
+    ) {
 
-        self.diffableSnapshot.moveSection(sectionID, afterSection: afterSectionID)
+        self.mutate {
+
+            $0.moveSection(sectionID, afterSection: afterSectionID)
+        }
+    }
+    
+    /**
+     Moves a section at a specified index to a new index
+
+     - parameter sectionIndex: a section index in the list to move. Specifying an invalid value will raise an exception.
+     - parameter newSectionIndex: the new section index to move into. Specifying an invalid value will raise an exception.
+     */
+    public mutating func moveSection(
+        at sectionIndex: Int,
+        to newSectionIndex: Int
+    ) {
+
+        self.mutate {
+
+            $0.unsafeMoveSection(at: sectionIndex, to: newSectionIndex)
+        }
     }
     
     /**
@@ -612,9 +820,25 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
 
      - parameter sectionIDs: the section identifiers to reload
      */
-    public mutating func reloadSections<S: Sequence>(withIDs sectionIDs: S) where S.Element == SectionID {
+    public mutating func reloadSections<C: Collection>(withIDs sectionIDs: C) where C.Element == SectionID {
 
-        self.diffableSnapshot.reloadSections(sectionIDs)
+        self.mutate {
+
+            $0.reloadSections(sectionIDs)
+        }
+    }
+    
+    /**
+     Marks the specified section indices as reloaded
+
+     - parameter sectionIndices: the section indices to reload. Specifying an invalid value will raise an exception.
+     */
+    public mutating func reloadSections<C: Collection>(at sectionIndices: C) where C.Element == Int {
+
+        self.mutate {
+
+            $0.unsafeReloadSections(at: sectionIndices)
+        }
     }
 
 
@@ -696,16 +920,18 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
     // MARK: Equatable
     
     public static func == (_ lhs: Self, _ rhs: Self) -> Bool {
-        
-        return lhs.id == rhs.id
+
+        return lhs.context == rhs.context
+            && lhs.generation == rhs.generation
     }
     
     
     // MARK: Hashable
     
     public func hash(into hasher: inout Hasher) {
-        
-        hasher.combine(self.id)
+
+        hasher.combine(self.context)
+        hasher.combine(self.generation)
     }
     
     
@@ -732,6 +958,12 @@ public struct ListSnapshot<O: DynamicObject>: RandomAccessCollection, Hashable {
     
     // MARK: Private
     
-    private let id: UUID = .init()
+    private var generation: UUID = .init()
 
+    @inline(__always)
+    private mutating func mutate<T>(_ mutation: (inout Internals.DiffableDataSourceSnapshot) -> T) -> T {
+
+        self.generation = .init()
+        return mutation(&self.diffableSnapshot)
+    }
 }
