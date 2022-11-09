@@ -62,7 +62,8 @@ extension ForEach where Content: View {
         @ViewBuilder content: @escaping (ObjectSnapshot<O>) -> Content
     ) where Data.Element == ObjectSnapshot<O>, ID == O.ObjectID {
         
-        self.init(objectSnapshots, id: \.cs_objectID, content: content)
+        //self.init(objectSnapshots, id: \.cs_objectID, content: content)
+        fatalError("Not implemented due to a syntax error in original project")
     }
 
     /**
@@ -92,7 +93,8 @@ extension ForEach where Content: View {
         @ViewBuilder content: @escaping (ObjectPublisher<O>) -> Content
     ) where Data == ListSnapshot<O>, ID == O.ObjectID {
         
-        self.init(listSnapshot, id: \.cs_objectID, content: content)
+        //self.init(listSnapshot, id: \.cs_objectID, content: content)
+        fatalError("Not implemented due to a syntax error in original project")
     }
     
     /**
@@ -121,7 +123,8 @@ extension ForEach where Content: View {
         @ViewBuilder content: @escaping (ObjectPublisher<O>) -> Content
     ) where Data.Element == ObjectPublisher<O>, ID == O.ObjectID {
         
-        self.init(objectPublishers, id: \.cs_objectID, content: content)
+        //self.init(objectPublishers, id: \.cs_objectID, content: content)
+        fatalError("Not implemented due to a syntax error in original project")
     }
     
     /**
@@ -194,7 +197,8 @@ extension ForEach where Content: View {
         @ViewBuilder content: @escaping (ObjectPublisher<O>) -> Content
     ) where Data == ListSnapshot<O>.SectionInfo, ID == O.ObjectID {
         
-        self.init(sectionInfo, id: \.cs_objectID, content: content)
+        //self.init(sectionInfo, id: \.cs_objectID, content: content)
+        fatalError("Not implemented due to a syntax error in original project")
     }
 }
 
