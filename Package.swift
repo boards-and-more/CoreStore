@@ -1,4 +1,4 @@
-// swift-tools-version:5.0
+// swift-tools-version:5.9
 //
 //  Package.swift
 //  CoreStore
@@ -29,7 +29,7 @@ import PackageDescription
 let package = Package(
     name: "CoreStore",
     platforms: [
-           .macOS(.v10_13), .iOS(.v11), .tvOS(.v11), .watchOS(.v4)
+        .macOS(.v10_15), .iOS(.v13), .tvOS(.v13), .watchOS(.v7)
     ],
     products: [
         .library(name: "CoreStore", targets: ["CoreStore"])
@@ -39,14 +39,15 @@ let package = Package(
         .target(
             name: "CoreStore",
             dependencies: [],
-            path: "Sources",
-            exclude: ["CoreStoreBridge.h", "CoreStoreBridge.m"]
+            path: "Sources"
         ),
         .testTarget(
             name: "CoreStoreTests",
             dependencies: ["CoreStore"],
             path: "CoreStoreTests",
-            exclude: ["BridgingTests.h", "BridgingTests.m"]
+            resources: [
+              .process("Model.xcdatamodeld")
+            ]
         )
     ],
     swiftLanguageVersions: [.v5]

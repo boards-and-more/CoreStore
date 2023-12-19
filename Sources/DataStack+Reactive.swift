@@ -30,7 +30,6 @@ import Combine
 
 // MARK: - DataStack
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
 extension DataStack {
     
     // MARK: Public
@@ -70,7 +69,6 @@ extension DataStack {
 
 // MARK: - DataStack.ReactiveNamespace
 
-@available(iOS 13.0, tvOS 13.0, watchOS 6.0, macOS 10.15, *)
 extension DataStack.ReactiveNamespace {
     
     // MARK: Public
@@ -95,7 +93,9 @@ extension DataStack.ReactiveNamespace {
      - parameter storage: the storage
      - returns: A `Future` that emits a `StorageInterface` instance added to the `DataStack`. Note that the `StorageInterface` event value may not always be the same instance as the parameter argument if a previous `StorageInterface` was already added at the same URL and with the same configuration.
      */
-    public func addStorage<T: StorageInterface>(_ storage: T) -> Future<T, CoreStoreError> {
+    public func addStorage<T: StorageInterface>(
+        _ storage: T
+    ) -> Future<T, CoreStoreError> {
         
         return .init { (promise) in
             
@@ -117,7 +117,7 @@ extension DataStack.ReactiveNamespace {
     }
     
     /**
-     Reactive extension for `CoreStore.DataStack`'s `addStorage(...)` API. Asynchronously adds a `LocalStorage` to the stack. Migrations are also initiated by default. The event emits `DataStack.AddStoragePublisher.MigrationProgress` `enum` values.
+     Reactive extension for `CoreStore.DataStack`'s `addStorage(...)` API. Asynchronously adds a `LocalStorage` to the stack. Migrations are also initiated by default. The event emits `MigrationProgress` `enum` values.
      ```
      dataStack.reactive
          .addStorage(
@@ -137,7 +137,7 @@ extension DataStack.ReactiveNamespace {
          .store(in: &cancellables)
      ```
      - parameter storage: the local storage
-     - returns: A `DataStack.AddStoragePublisher` that emits a `DataStack.AddStoragePublisher.MigrationProgress` value with metadata for migration progress. Note that the `LocalStorage` event value may not always be the same instance as the parameter argument if a previous `LocalStorage` was already added at the same URL and with the same configuration.
+     - returns: A `DataStack.AddStoragePublisher` that emits a `MigrationProgress` value with metadata for migration progress. Note that the `LocalStorage` event value may not always be the same instance as the parameter argument if a previous `LocalStorage` was already added at the same URL and with the same configuration.
      */
     public func addStorage<T: LocalStorage>(_ storage: T) -> DataStack.AddStoragePublisher<T> {
         

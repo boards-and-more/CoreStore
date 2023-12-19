@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name = "CoreStore"
-    s.version = "8.1.0"
-    s.swift_version = "5.5"
+    s.version = "9.2.0"
+    s.swift_version = "5.9"
     s.license = "MIT"
     s.homepage = "https://github.com/JohnEstropia/CoreStore"
     s.documentation_url = "https://JohnEstropia.github.io/CoreStore"
@@ -9,14 +9,27 @@ Pod::Spec.new do |s|
     s.author = { "John Rommel Estropia" => "rommel.estropia@gmail.com" }
     s.source = { :git => "https://github.com/JohnEstropia/CoreStore.git", :tag => s.version.to_s }
 
-    s.ios.deployment_target = "11.0"
-    s.osx.deployment_target = "10.13"
-    s.watchos.deployment_target = "4.0"
-    s.tvos.deployment_target = "11.0"
+    s.ios.deployment_target = "13.0"
+    s.osx.deployment_target = "10.15"
+    s.tvos.deployment_target = "13.0"
+    s.watchos.deployment_target = "7.4"
 
-    s.source_files = "Sources", "Sources/**/*.{swift,h,m}"
+    s.source_files = "Sources", "Sources/**/*.swift"
     s.public_header_files = "Sources/**/*.h"
     s.frameworks = "Foundation", "CoreData"
     s.requires_arc = true
     s.pod_target_xcconfig = { 'OTHER_SWIFT_FLAGS[config=Debug]' => '-D DEBUG', 'OTHER_LDFLAGS' => '-weak_framework Combine -weak_framework SwiftUI' }
+
+    s.test_spec "CoreStoreTests" do |ts|
+        ts.source_files = "CoreStoreTests", "CoreStoreTests/**/*.swift", "CoreStoreTests/**/*.xcdatamodeld", "CoreStoreTests/**/*.xcdatamodel"
+        ts.public_header_files = "CoreStoreTests/**/*.h"
+        ts.resources = [ "CoreStoreTests/**/*.xcdatamodeld", "CoreStoreTests/**/*.xcdatamodel" ]
+        ts.preserve_paths =  "CoreStoreTests/**/*.xcdatamodeld"
+        ts.resource_bundles = { 'CoreStoreTests' => ["CoreStoreTests/**/*.momd"] }
+        ts.frameworks = "Foundation", "CoreData"
+        ts.requires_arc = true
+        ts.ios.deployment_target = "13.0"
+        ts.osx.deployment_target = "10.15"
+        ts.tvos.deployment_target = "13.0"
+    end
 end

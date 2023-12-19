@@ -20,8 +20,8 @@ Unleashing the real power of Core Data with the elegance and safety of Swift
 <br />
 </p>
 
-* **Swift 5.5:** iOS 11+ / macOS 10.13+ / watchOS 4.0+ / tvOS 11.0+
-* Previously supported Swift versions: [Swift 5.4](https://github.com/JohnEstropia/CoreStore/tree/8.0.1), [Swift 5.3](https://github.com/JohnEstropia/CoreStore/tree/7.3.1), [Swift 5.1](https://github.com/JohnEstropia/CoreStore/tree/7.0.4), [Swift 5.0](https://github.com/JohnEstropia/CoreStore/tree/6.3.2), [Swift 4.2](https://github.com/JohnEstropia/CoreStore/tree/6.2.1), [Swift 3.2](https://github.com/JohnEstropia/CoreStore/tree/4.2.3)
+* **Swift 5.9:** iOS 13+ / macOS 10.15+ / watchOS 7.4+ / tvOS 13.0+
+* Previously supported Swift versions: [Swift 5.4](https://github.com/JohnEstropia/CoreStore/tree/8.0.1), [Swift 5.3](https://github.com/JohnEstropia/CoreStore/tree/7.3.1), [Swift 5.7](https://github.com/JohnEstropia/CoreStore/tree/9.1.0)
 
 Upgrading from previous CoreStore versions? Check out the [🆕 features](#features) and make sure to read the [Change logs](https://github.com/JohnEstropia/CoreStore/releases).
 
@@ -2438,9 +2438,9 @@ var body: some View {
 
 # Installation
 - Requires:
-    - iOS 10 SDK and above
-    - Swift 5.2 (Xcode 11.4+)
-    - For previous Swift versions: [Swift 3.2](https://github.com/JohnEstropia/CoreStore/tree/4.2.3), [Swift 4.2](https://github.com/JohnEstropia/CoreStore/tree/6.2.1), [Swift 5.0](https://github.com/JohnEstropia/CoreStore/tree/6.3.2), [Swift 5.1](https://github.com/JohnEstropia/CoreStore/tree/7.0.4)
+    - iOS 13 SDK and above
+    - Swift 5.7 (Xcode 14.0+)
+    - For previous Swift versions: [Swift 5.5](https://github.com/JohnEstropia/CoreStore/tree/8.1.0), [Swift 5.4](https://github.com/JohnEstropia/CoreStore/tree/8.0.1), [Swift 5.3](https://github.com/JohnEstropia/CoreStore/tree/7.3.1)
 - Dependencies:
     - *None*
 - Other notes:
@@ -2449,7 +2449,7 @@ var body: some View {
 ### Install with CocoaPods
 In your `Podfile`, add
 ```
-pod 'CoreStore', '~> 8.0'
+pod 'CoreStore', '~> 9.1'
 ```
 and run 
 ```
@@ -2460,7 +2460,7 @@ This installs CoreStore as a framework. Declare `import CoreStore` in your swift
 ### Install with Carthage
 In your `Cartfile`, add
 ```
-github "JohnEstropia/CoreStore" >= 8.0.0
+github "JohnEstropia/CoreStore" >= 9.2.0
 ```
 and run 
 ```
@@ -2471,7 +2471,7 @@ This installs CoreStore as a framework. Declare `import CoreStore` in your swift
 #### Install with Swift Package Manager:
 ```swift
 dependencies: [
-    .package(url: "https://github.com/JohnEstropia/CoreStore.git", from: "8.0.1"))
+    .package(url: "https://github.com/JohnEstropia/CoreStore.git", from: "9.2.0"))
 ]
 ```
 Declare `import CoreStore` in your swift file to use the library.
